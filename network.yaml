@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Stack contains network resources and exports endpoint to network
+
+Parameters:
+  CIDRVpcA:
+    Type: String
+    Default: 10.0.0.0/16
+    Description: CIDR block for VpcA
+
+  CIDRSubnetA:
+    Type: String
+    Default: 10.0.0.0/24
+    Description: CIDR block for SubnetA
+
+Resources:
+  VpcA:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !Ref CIDRVpcA
+
+  SubnetA:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref CIDRSubnetA
+      VpcId: !Ref VpcA
+
+  InternetGatewayA:
+    Type: "AWS::EC2::InternetGateway"
+    Properties: 
+      Tags:
+        - Key: "Name"
+          Value: "InternetGatewayA"
+
+  GatewayAttachmentVpcA:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref VpcA
+      InternetGatewayId: !Ref InternetGatewayA
+
+  RouteTableVpcA:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref VpcA
+
+  Route:
+    Type: "AWS::EC2::Route"
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayA
+      RouteTableId: !Ref RouteTableVpcA
+
+  RouteTableAssociationSubnetA:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref RouteTableVpcA
+      SubnetId: !Ref SubnetA
+
+  EIP:
+    Type: "AWS::EC2::EIP"
+    Properties:
+      Domain: vpc
+    DependsOn: 
+      - InternetGatewayA
+
+Outputs:
+  VpcA:
+    Description: VpcA
+    Value: !Ref VpcA
+    Export:
+      Name: VpcA
+
+  SubnetA:
+    Description: SubnetA
+    Value: !Ref SubnetA
+    Export:
+      Name: "VpcASubnetA"
+
+  EIP:
+    Description: Entrypoint address for Jenkins
+    Value: !Ref EIP
+    Export:
+      Name: "EIPVpcA"
