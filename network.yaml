@@ -58,6 +58,13 @@ Resources:
       RouteTableId: !Ref RouteTableVpcA
       SubnetId: !Ref SubnetA
 
+  EIP:
+    Type: "AWS::EC2::EIP"
+    Properties:
+      Domain: vpc
+    DependsOn: 
+      - InternetGatewayA
+
 Outputs:
   VpcA:
     Description: VpcA
@@ -70,3 +77,9 @@ Outputs:
     Value: !Ref SubnetA
     Export:
       Name: "VpcASubnetA"
+
+  EIP:
+    Description: Entrypoint address for Jenkins
+    Value: !Ref EIP
+    Export:
+      Name: "EIPVpcA"
