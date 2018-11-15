@@ -24,6 +24,8 @@ Resources:
     Type: "AWS::EC2::VPC"
     Properties:
       CidrBlock: !Ref CIDRVpcA
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
 
   SubnetA:
     Type: "AWS::EC2::Subnet"
