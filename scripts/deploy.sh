@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-STACK_NAME="Network"
+STACK_NAME="network"
 TEMPLATE_NAME="network.yaml"
 
 if [[ `aws cloudformation describe-stacks | jq ".Stacks[] | select(.StackName == \"${STACK_NAME}\")"` ]]; then 

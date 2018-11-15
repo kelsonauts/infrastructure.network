@@ -71,6 +71,12 @@ Resources:
       RouteTableId: !Ref RouteTableVpcA
       SubnetId: !Ref SubnetA
 
+  RouteTableAssociationSubnetB:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref RouteTableVpcA
+      SubnetId: !Ref SubnetB
+
   EIP:
     Type: "AWS::EC2::EIP"
     Properties:
