@@ -14,11 +14,18 @@ Parameters:
     Default: 10.0.0.0/24
     Description: CIDR block for SubnetA
 
+  CIDRSubnetB:
+    Type: String
+    Default: 10.0.1.0/24
+    Description: CIDR block for SubnetB (white ips)
+
 Resources:
   VpcA:
     Type: "AWS::EC2::VPC"
     Properties:
       CidrBlock: !Ref CIDRVpcA
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
 
   SubnetA:
     Type: "AWS::EC2::Subnet"
@@ -26,6 +33,14 @@ Resources:
       AvailabilityZone: us-east-1a
       CidrBlock: !Ref CIDRSubnetA
       VpcId: !Ref VpcA
+
+  SubnetB:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref CIDRSubnetB
+      VpcId: !Ref VpcA
+      MapPublicIpOnLaunch: true
 
   InternetGatewayA:
     Type: "AWS::EC2::InternetGateway"
@@ -58,6 +73,12 @@ Resources:
       RouteTableId: !Ref RouteTableVpcA
       SubnetId: !Ref SubnetA
 
+  RouteTableAssociationSubnetB:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref RouteTableVpcA
+      SubnetId: !Ref SubnetB
+
   EIP:
     Type: "AWS::EC2::EIP"
     Properties:
@@ -77,6 +98,12 @@ Outputs:
     Value: !Ref SubnetA
     Export:
       Name: "VpcASubnetA"
+
+  SubnetB:
+    Description: SubnetB (White Ips)
+    Value: !Ref SubnetB
+    Export:
+      Name: "VpcASubnetB"
 
   EIP:
     Description: Entrypoint address for Jenkins
